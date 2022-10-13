@@ -1,6 +1,7 @@
 import typing as tp
 import nltk
 from collections import defaultdict
+from abc import ABC, abstractmethod
 
 
 class WordIndex(object):
@@ -15,7 +16,14 @@ class WordIndex(object):
                 self.index[word] += 1
 
 
-class UnigramIndex(object):
+class CharIndex(ABC):
+
+    @abstractmethod
+    def index_word(self, word: str, frequency: int = 1, lower_case: bool = False):
+        pass
+
+
+class UnigramIndex(CharIndex):
     """
     Provides unigram probability estimation
     (eventually) given a word index
@@ -51,6 +59,29 @@ class UnigramIndex(object):
             i.index_word(word, frequency=frequency, lower_case=lower_case)
         return i
 
+
+class BiGramIndex(CharIndex):
+
+    def __init__(self):
+        self.index = defaultdict(lambda : defaultdict(lambda : 0))
+
+    def index_word(self, word: str, frequency: int = 1, lower_case: bool = False):
+        for (a, b) in nltk.ngrams(word, n=2):
+            self.index[a][b] += 1
+
+    def __getitem__(self, item: tp.Tuple[str,str]):
+        return self.index[item[0]][item[1]]
+
+    def frequency(self, char: str):
+        return sum(self.index[char].values())
+
+    @staticmethod
+    def from_word_index(word_index: WordIndex,
+                        lower_case: bool = False):
+        i = BiGramIndex()
+        for word, frequency in word_index.index.items():
+            i.index_word(word, frequency=frequency, lower_case=lower_case)
+        return i
 
 
 
