@@ -19,7 +19,8 @@ class WordIndex(object):
 class CharIndex(ABC):
 
     @abstractmethod
-    def index_word(self, word: str, frequency: int = 1, lower_case: bool = False):
+    def index_word(self, word: str,
+                   frequency: int = 1, lower_case: bool = False):
         pass
 
 
@@ -67,7 +68,8 @@ class BiGramIndex(CharIndex):
 
     def index_word(self, word: str, frequency: int = 1, lower_case: bool = False):
         for (a, b) in nltk.ngrams(word, n=2):
-            self.index[a][b] += 1
+            self.index[a][b] += frequency
+        self.index[word[-1]][' '] += frequency
 
     def __getitem__(self, item: tp.Tuple[str,str]):
         return self.index[item[0]][item[1]]
