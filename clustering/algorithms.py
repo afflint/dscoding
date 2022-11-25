@@ -44,7 +44,8 @@ class NaiveKMeans(object):
         return rss_value
 
     @staticmethod
-    def clusters(X: np.ndarray, assignments: np.ndarray) -> Dict[int, list]:
+    def clusters(X: np.ndarray,
+                 assignments: np.ndarray) -> Dict[int, list]:
         clusters = dict([(i, []) for i in set(assignments)])
         for p, k in enumerate(assignments):
             clusters[k].append(X[p])
