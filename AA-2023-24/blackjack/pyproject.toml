@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "blackjack"
+version = "0.1.0"
+description = "Blackjack example for DS coding"
+authors = ["Alfio Ferrara <alfio.ferrara@unimi.it>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+jupyter = "^1.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
