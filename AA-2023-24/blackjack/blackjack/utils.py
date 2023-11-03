@@ -1,34 +1,35 @@
-from typing import Callable
+from collections import namedtuple
+from typing import Callable, List
+
+Card = namedtuple('Card', ['symbol', 'seed'])
 
 
-def create_simple_deck():
+def create_deck(symbols: list, seeds: list = None):
+    """
+    :param symbols: list of card symbols
+    :param seeds: list of card seeds
+    :return: list of cards as named tuples
+    """
+    if seeds is None:
+        seeds = ['C', 'Q', 'F', 'P']
     deck = []
-    seeds = 'S C H D'.split()
-    values = [str(x) for x in range(2, 8)] + ['A', 'J', 'Q', 'K']
-    for value in values:
+    for symbol in symbols:
         for seed in seeds:
-            deck.append((value, seed))
+            card = Card(symbol=symbol, seed=seed)
+            deck.append(card)
     return deck
 
 
-def create_deck():
+def create_decks(
+        symbols: list,
+        seeds: list = None,
+        num: int = 1,
+        how_to: Callable = create_deck) -> List[Card]:
     deck = []
-    seeds = 'S C H D'.split()
-    values = [str(x) for x in range(2, 11)] + ['A', 'J', 'Q', 'K']
-    for value in values:
-        for seed in seeds:
-            deck.append((value, seed))
+    for i in range(num):
+        d = how_to(symbols=symbols, seeds=seeds)
+        deck.extend(d)
     return deck
 
 
-def create_decks(number: int = 1,
-                 deck_generator: Callable = create_deck):
-    decks = []
-    for i in range(number):
-        deck = deck_generator()
-        decks.extend(deck)
-    return decks
 
-
-def as_str(card):
-    return "{}{}".format(card[0], card[1].lower())
