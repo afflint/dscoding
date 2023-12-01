@@ -1,0 +1,204 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vis-network@latest/styles/vis-network.css" type="text/css" />
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vis-network@latest/dist/vis-network.min.js"> </script>
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+
+<style type="text/css">
+
+        #mynetwork {
+            width: 500px;
+            height: 500px;
+            background-color: #ffffff;
+            border: 1px solid lightgray;
+            position: relative;
+            float: left;
+        }
+
+        
+        #loadingBar {
+            position:absolute;
+            top:0px;
+            left:0px;
+            width: 500px;
+            height: 500px;
+            background-color:rgba(200,200,200,0.8);
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -ms-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+            opacity:1;
+        }
+
+        #bar {
+            position:absolute;
+            top:0px;
+            left:0px;
+            width:20px;
+            height:20px;
+            margin:auto auto auto auto;
+            border-radius:11px;
+            border:2px solid rgba(30,30,30,0.05);
+            background: rgb(0, 173, 246); /* Old browsers */
+            box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+        }
+
+        #border {
+            position:absolute;
+            top:10px;
+            left:10px;
+            width:500px;
+            height:23px;
+            margin:auto auto auto auto;
+            box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+            border-radius:10px;
+        }
+
+        #text {
+            position:absolute;
+            top:8px;
+            left:530px;
+            width:30px;
+            height:50px;
+            margin:auto auto auto auto;
+            font-size:22px;
+            color: #000000;
+        }
+
+        div.outerBorder {
+            position:relative;
+            top:400px;
+            width:600px;
+            height:44px;
+            margin:auto auto auto auto;
+            border:8px solid rgba(0,0,0,0.1);
+            background: rgb(252,252,252); /* Old browsers */
+            background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+            background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+            border-radius:72px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+        }
+        
+
+        
+
+        
+</style>
+
+</head>
+
+<body>
+<div id = "mynetwork"></div>
+
+<div id="loadingBar">
+    <div class="outerBorder">
+        <div id="text">0%</div>
+        <div id="border">
+            <div id="bar"></div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    // initialize global variables.
+    var edges;
+    var nodes;
+    var network; 
+    var container;
+    var options, data;
+
+    
+    // This method is responsible for drawing the graph, returns the drawn network
+    function drawGraph() {
+        var container = document.getElementById('mynetwork');
+        
+        
+
+        // parsing and collecting nodes and edges from the python
+        nodes = new vis.DataSet([{"id": 0, "label": "Glenwood Ave \u0026 Touhy Ave", "shape": "dot", "x": -87.665906, "y": 42.0128005}, {"id": 1, "label": "Clark St \u0026 Touhy Ave", "shape": "dot", "x": -87.6743671152, "y": 42.01256011541}, {"id": 2, "label": "Sheffield Ave \u0026 Fullerton Ave", "shape": "dot", "x": -87.6537080423, "y": 41.9256018819}, {"id": 3, "label": "Greenview Ave \u0026 Fullerton Ave", "shape": "dot", "x": -87.6658, "y": 41.92533}, {"id": 4, "label": "Clark St \u0026 Bryn Mawr Ave", "shape": "dot", "x": -87.669154, "y": 41.983593}, {"id": 5, "label": "Paulina St \u0026 Montrose Ave", "shape": "dot", "x": -87.671387, "y": 41.961507}, {"id": 6, "label": "Michigan Ave \u0026 Jackson Blvd", "shape": "dot", "x": -87.62408, "y": 41.87785}, {"id": 7, "label": "State St \u0026 Randolph St", "shape": "dot", "x": -87.62783423066139, "y": 41.88462107257936}, {"id": 8, "label": "Wood St \u0026 Chicago Ave", "shape": "dot", "x": -87.672069, "y": 41.895634}, {"id": 9, "label": "Honore St \u0026 Division St", "shape": "dot", "x": -87.673935, "y": 41.903119}, {"id": 10, "label": "Oakley Ave \u0026 Irving Park Rd", "shape": "dot", "x": -87.6860796243, "y": 41.95434085219}, {"id": 11, "label": "Broadway \u0026 Sheridan Rd", "shape": "dot", "x": -87.649993, "y": 41.952833}, {"id": 12, "label": "Damen Ave \u0026 Clybourn Ave", "shape": "dot", "x": -87.677856, "y": 41.931931}, {"id": 13, "label": "Racine Ave \u0026 15th St", "shape": "dot", "x": -87.65650016666666, "y": 41.861251333333335}, {"id": 14, "label": "Clinton St \u0026 Washington Blvd", "shape": "dot", "x": -87.64117, "y": 41.88338}, {"id": 15, "label": "LaSalle St \u0026 Jackson Blvd", "shape": "dot", "x": -87.631929, "y": 41.878166}, {"id": 16, "label": "Clarendon Ave \u0026 Leland Ave", "shape": "dot", "x": -87.6500285, "y": 41.967962}, {"id": 17, "label": "Broadway \u0026 Granville Ave", "shape": "dot", "x": -87.6602845349, "y": 41.9947796884}, {"id": 18, "label": "Stockton Dr \u0026 Wrightwood Ave", "shape": "dot", "x": -87.638742, "y": 41.93132}, {"id": 19, "label": "Rush St \u0026 Superior St", "shape": "dot", "x": -87.6259080327, "y": 41.89576474564}, {"id": 20, "label": "Larrabee St \u0026 Kingsbury St", "shape": "dot", "x": -87.642884, "y": 41.897764}, {"id": 21, "label": "St. Clair St \u0026 Erie St", "shape": "dot", "x": -87.62279838323593, "y": 41.89434513742426}, {"id": 22, "label": "Lincoln Park Conservatory", "shape": "dot", "x": -87.63582453131676, "y": 41.92393131136619}, {"id": 23, "label": "Clark St \u0026 Ida B Wells Dr", "shape": "dot", "x": -87.6305845355, "y": 41.8759326655}, {"id": 24, "label": "Indiana Ave \u0026 Roosevelt Rd", "shape": "dot", "x": -87.623041, "y": 41.867888}, {"id": 25, "label": "Clark St \u0026 Schreiber Ave", "shape": "dot", "x": -87.6713773393, "y": 41.99925182186}, {"id": 26, "label": "Michigan Ave \u0026 Washington St", "shape": "dot", "x": -87.6246839761734, "y": 41.8839840647265}, {"id": 27, "label": "Sedgwick St \u0026 North Ave", "shape": "dot", "x": -87.638677, "y": 41.911386}, {"id": 28, "label": "California Ave \u0026 Altgeld St", "shape": "dot", "x": -87.69766083333333, "y": 41.9266475}, {"id": 29, "label": "Milwaukee Ave \u0026 Rockwell St", "shape": "dot", "x": -87.69265919923781, "y": 41.92019556200566}, {"id": 30, "label": "Halsted St \u0026 Roscoe St", "shape": "dot", "x": -87.64895, "y": 41.94367}, {"id": 31, "label": "Wolcott Ave \u0026 Polk St", "shape": "dot", "x": -87.673688, "y": 41.871262}, {"id": 32, "label": "Indiana Ave \u0026 31st St", "shape": "dot", "x": -87.621857, "y": 41.838842}, {"id": 33, "label": "Emerald Ave \u0026 31st St", "shape": "dot", "x": -87.645143, "y": 41.838198}, {"id": 34, "label": "Indiana Ave \u0026 40th St", "shape": "dot", "x": -87.6216, "y": 41.82168}, {"id": 35, "label": "Lake Park Ave \u0026 56th St", "shape": "dot", "x": -87.587782, "y": 41.793242}, {"id": 36, "label": "Shore Dr \u0026 55th St", "shape": "dot", "x": -87.580715, "y": 41.795212}, {"id": 37, "label": "Ashland Ave \u0026 Wrightwood Ave", "shape": "dot", "x": -87.668507, "y": 41.92883}, {"id": 38, "label": "Daley Center Plaza", "shape": "dot", "x": -87.629634, "y": 41.884241}, {"id": 39, "label": "Sheridan Rd \u0026 Montrose Ave", "shape": "dot", "x": -87.65463183333334, "y": 41.96164683333333}, {"id": 40, "label": "Southport Ave \u0026 Waveland Ave", "shape": "dot", "x": -87.66394, "y": 41.94815}, {"id": 41, "label": "Elston Ave \u0026 Cortland St", "shape": "dot", "x": -87.66674637794495, "y": 41.91643342912655}, {"id": 42, "label": "State St \u0026 Harrison St", "shape": "dot", "x": -87.627716, "y": 41.874053}, {"id": 43, "label": "Clark St \u0026 Lake St", "shape": "dot", "x": -87.6308760584, "y": 41.88602082773}, {"id": 44, "label": "Halsted St \u0026 North Branch St", "shape": "dot", "x": -87.6485665, "y": 41.899331333333336}, {"id": 45, "label": "Clark St \u0026 Chicago Ave", "shape": "dot", "x": -87.63089, "y": 41.89675}, {"id": 46, "label": "Orleans St \u0026 Merchandise Mart Plaza", "shape": "dot", "x": -87.63639, "y": 41.888243}, {"id": 47, "label": "Greenview Ave \u0026 Jarvis Ave", "shape": "dot", "x": -87.66857, "y": 42.015962}, {"id": 48, "label": "Washtenaw Ave \u0026 Lawrence Ave", "shape": "dot", "x": -87.696182, "y": 41.9687465}, {"id": 49, "label": "Western Ave \u0026 Granville Ave", "shape": "dot", "x": -87.689438282, "y": 41.99416136902}, {"id": 50, "label": "Glenwood Ave \u0026 Morse Ave", "shape": "dot", "x": -87.6655023944, "y": 42.00797192287}, {"id": 51, "label": "Sedgwick St \u0026 Huron St", "shape": "dot", "x": -87.638437, "y": 41.894666}, {"id": 52, "label": "University Ave \u0026 57th St", "shape": "dot", "x": -87.599861, "y": 41.791478}, {"id": 53, "label": "Lake Park Ave \u0026 47th St", "shape": "dot", "x": -87.591875, "y": 41.809443}, {"id": 54, "label": "Southport Ave \u0026 Clybourn Ave", "shape": "dot", "x": -87.663712, "y": 41.920771}, {"id": 55, "label": "Clinton St \u0026 Jackson Blvd", "shape": "dot", "x": -87.64098107814789, "y": 41.87831661183069}, {"id": 56, "label": "Desplaines St \u0026 Jackson Blvd", "shape": "dot", "x": -87.64394760131836, "y": 41.87811890091227}, {"id": 57, "label": "Halsted St \u0026 Clybourn Ave", "shape": "dot", "x": -87.648128, "y": 41.909668}, {"id": 58, "label": "Clinton St \u0026 Lake St", "shape": "dot", "x": -87.641823, "y": 41.885637}, {"id": 59, "label": "Evanston Civic Center", "shape": "dot", "x": -87.686554, "y": 42.057044}, {"id": 60, "label": "Clinton St \u0026 Roosevelt Rd", "shape": "dot", "x": -87.6410879593, "y": 41.8671177825}, {"id": 61, "label": "State St \u0026 35th St", "shape": "dot", "x": -87.62679755687714, "y": 41.8310363140161}, {"id": 62, "label": "Damen Ave \u0026 Cortland St", "shape": "dot", "x": -87.67738, "y": 41.9159495}, {"id": 63, "label": "Damen Ave \u0026 Wabansia Ave", "shape": "dot", "x": -87.68, "y": 41.91}, {"id": 64, "label": "Peoria St \u0026 Jackson Blvd", "shape": "dot", "x": -87.64961779117584, "y": 41.8776415962753}, {"id": 65, "label": "Paulina Ave \u0026 North Ave", "shape": "dot", "x": -87.66993016004562, "y": 41.90985465216731}, {"id": 66, "label": "Dearborn St \u0026 Adams St", "shape": "dot", "x": -87.6297910363, "y": 41.8793563587}, {"id": 67, "label": "Winthrop Ave \u0026 Lawrence Ave", "shape": "dot", "x": -87.657706, "y": 41.968881333333336}, {"id": 68, "label": "Wilton Ave \u0026 Belmont Ave", "shape": "dot", "x": -87.65293033333333, "y": 41.940051}, {"id": 69, "label": "Hampden Ct \u0026 Diversey Ave", "shape": "dot", "x": -87.64, "y": 41.93}, {"id": 70, "label": "Halsted St \u0026 Willow St", "shape": "dot", "x": -87.64870133333334, "y": 41.9138635}, {"id": 71, "label": "Halsted St \u0026 Maxwell St", "shape": "dot", "x": -87.647285223, "y": 41.864876509}, {"id": 72, "label": "Sheffield Ave \u0026 Waveland Ave", "shape": "dot", "x": -87.654529, "y": 41.949399}, {"id": 73, "label": "Paulina St \u0026 Howard St", "shape": "dot", "x": -87.673573, "y": 42.019159}, {"id": 74, "label": "Broadway \u0026 Ridge Ave", "shape": "dot", "x": -87.6602738295, "y": 41.9840446107}, {"id": 75, "label": "Clark St \u0026 Elm St", "shape": "dot", "x": -87.63128, "y": 41.902973}, {"id": 76, "label": "Franklin St \u0026 Monroe St", "shape": "dot", "x": -87.635185, "y": 41.880317}, {"id": 77, "label": "Orleans St \u0026 Hubbard St", "shape": "dot", "x": -87.636618, "y": 41.890028}, {"id": 78, "label": "State St \u0026 Pearson St", "shape": "dot", "x": -87.628722, "y": 41.897448}, {"id": 79, "label": "May St \u0026 Cullerton St", "shape": "dot", "x": -87.654127, "y": 41.855136}, {"id": 80, "label": "Ogden Ave \u0026 Chicago Ave", "shape": "dot", "x": -87.6540612729, "y": 41.896362458}, {"id": 81, "label": "DuSable Lake Shore Dr \u0026 North Blvd", "shape": "dot", "x": -87.62676316666666, "y": 41.9117565}, {"id": 82, "label": "Wood St \u0026 Milwaukee Ave", "shape": "dot", "x": -87.672552, "y": 41.907655}, {"id": 83, "label": "Ashland Ave \u0026 Division St", "shape": "dot", "x": -87.66805383333333, "y": 41.903337}, {"id": 84, "label": "Wells St \u0026 Huron St", "shape": "dot", "x": -87.63438733333334, "y": 41.894771}, {"id": 85, "label": "Damen Ave \u0026 Charleston St", "shape": "dot", "x": -87.67793133333333, "y": 41.920078833333335}, {"id": 86, "label": "Michigan Ave \u0026 14th St", "shape": "dot", "x": -87.623727, "y": 41.864059}, {"id": 87, "label": "Rockwell St \u0026 Cermak Rd", "shape": "dot", "x": -87.69, "y": 41.85}, {"id": 88, "label": "Western Ave \u0026 21st St", "shape": "dot", "x": -87.685838, "y": 41.854109}, {"id": 89, "label": "Broadway \u0026 Waveland Ave", "shape": "dot", "x": -87.648636, "y": 41.949074}, {"id": 90, "label": "Blackstone Ave \u0026 Hyde Park Blvd", "shape": "dot", "x": -87.590368, "y": 41.802562}, {"id": 91, "label": "Dorchester Ave \u0026 49th St", "shape": "dot", "x": -87.592464, "y": 41.805772}, {"id": 92, "label": "Ashland Ave \u0026 Grace St", "shape": "dot", "x": -87.66867166666667, "y": 41.9506475}, {"id": 93, "label": "Clinton St \u0026 Polk St", "shape": "dot", "x": -87.6409491327, "y": 41.87146651779}, {"id": 94, "label": "Chicago Ave \u0026 Washington St", "shape": "dot", "x": -87.679101, "y": 42.032562}, {"id": 95, "label": "Dodge Ave \u0026 Main St", "shape": "dot", "x": -87.69918769598006, "y": 42.03463185161588}, {"id": 96, "label": "Wabash Ave \u0026 Grand Ave", "shape": "dot", "x": -87.626761, "y": 41.891466}, {"id": 97, "label": "Lincoln Ave \u0026 Belmont Ave", "shape": "dot", "x": -87.66830766666666, "y": 41.939536833333335}, {"id": 98, "label": "Southport Ave \u0026 Wellington Ave", "shape": "dot", "x": -87.663576, "y": 41.935733}, {"id": 99, "label": "Sheffield Ave \u0026 Wellington Ave", "shape": "dot", "x": -87.65266209840775, "y": 41.9362534831413}, {"id": 100, "label": "Kimball Ave \u0026 Belmont Ave", "shape": "dot", "x": -87.711561, "y": 41.939398}, {"id": 101, "label": "Larrabee St \u0026 Division St", "shape": "dot", "x": -87.6433534936, "y": 41.90348607004}]);
+        edges = new vis.DataSet([{"from": 0, "to": 1, "weight": 2}, {"from": 2, "to": 3, "weight": 1}, {"from": 4, "to": 5, "weight": 1}, {"from": 6, "to": 7, "weight": 1}, {"from": 8, "to": 9, "weight": 1}, {"from": 10, "to": 11, "weight": 1}, {"from": 2, "to": 12, "weight": 1}, {"from": 13, "to": 14, "weight": 1}, {"from": 15, "to": 14, "weight": 2}, {"from": 16, "to": 17, "weight": 1}, {"from": 2, "to": 18, "weight": 1}, {"from": 19, "to": 20, "weight": 1}, {"from": 6, "to": 21, "weight": 1}, {"from": 22, "to": 22, "weight": 1}, {"from": 15, "to": 23, "weight": 1}, {"from": 6, "to": 24, "weight": 2}, {"from": 4, "to": 25, "weight": 1}, {"from": 22, "to": 26, "weight": 1}, {"from": 27, "to": 27, "weight": 1}, {"from": 28, "to": 29, "weight": 1}, {"from": 2, "to": 30, "weight": 1}, {"from": 13, "to": 31, "weight": 1}, {"from": 32, "to": 33, "weight": 1}, {"from": 32, "to": 34, "weight": 1}, {"from": 35, "to": 36, "weight": 1}, {"from": 2, "to": 37, "weight": 1}, {"from": 22, "to": 38, "weight": 1}, {"from": 39, "to": 40, "weight": 1}, {"from": 4, "to": 41, "weight": 1}, {"from": 42, "to": 43, "weight": 1}, {"from": 44, "to": 45, "weight": 1}, {"from": 6, "to": 46, "weight": 1}, {"from": 0, "to": 4, "weight": 2}, {"from": 0, "to": 47, "weight": 1}, {"from": 48, "to": 49, "weight": 1}, {"from": 0, "to": 50, "weight": 2}, {"from": 42, "to": 51, "weight": 1}, {"from": 52, "to": 53, "weight": 1}, {"from": 0, "to": 54, "weight": 1}, {"from": 6, "to": 55, "weight": 1}, {"from": 15, "to": 56, "weight": 1}, {"from": 57, "to": 3, "weight": 1}, {"from": 58, "to": 56, "weight": 1}, {"from": 13, "to": 55, "weight": 1}, {"from": 59, "to": 59, "weight": 1}, {"from": 60, "to": 56, "weight": 1}, {"from": 32, "to": 61, "weight": 1}, {"from": 62, "to": 63, "weight": 1}, {"from": 44, "to": 64, "weight": 1}, {"from": 62, "to": 65, "weight": 1}, {"from": 8, "to": 66, "weight": 1}, {"from": 67, "to": 11, "weight": 1}, {"from": 68, "to": 69, "weight": 1}, {"from": 40, "to": 11, "weight": 1}, {"from": 39, "to": 11, "weight": 1}, {"from": 65, "to": 65, "weight": 1}, {"from": 70, "to": 11, "weight": 1}, {"from": 43, "to": 66, "weight": 1}, {"from": 71, "to": 66, "weight": 1}, {"from": 72, "to": 11, "weight": 1}, {"from": 0, "to": 73, "weight": 1}, {"from": 4, "to": 74, "weight": 1}, {"from": 15, "to": 75, "weight": 1}, {"from": 15, "to": 76, "weight": 1}, {"from": 15, "to": 77, "weight": 1}, {"from": 21, "to": 78, "weight": 2}, {"from": 79, "to": 78, "weight": 1}, {"from": 78, "to": 78, "weight": 1}, {"from": 80, "to": 78, "weight": 1}, {"from": 81, "to": 78, "weight": 1}, {"from": 82, "to": 78, "weight": 1}, {"from": 83, "to": 9, "weight": 3}, {"from": 84, "to": 78, "weight": 1}, {"from": 43, "to": 78, "weight": 1}, {"from": 85, "to": 9, "weight": 1}, {"from": 86, "to": 14, "weight": 1}, {"from": 87, "to": 88, "weight": 1}, {"from": 82, "to": 89, "weight": 1}, {"from": 55, "to": 14, "weight": 1}, {"from": 90, "to": 91, "weight": 1}, {"from": 92, "to": 89, "weight": 2}, {"from": 42, "to": 30, "weight": 1}, {"from": 93, "to": 14, "weight": 1}, {"from": 94, "to": 95, "weight": 1}, {"from": 6, "to": 96, "weight": 2}, {"from": 97, "to": 30, "weight": 1}, {"from": 15, "to": 98, "weight": 1}, {"from": 99, "to": 100, "weight": 1}, {"from": 27, "to": 101, "weight": 1}]);
+
+        // adding nodes and edges to the graph
+        data = {nodes: nodes, edges: edges};
+
+        var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+        
+        
+
+        
+
+        network = new vis.Network(container, data, options);
+	 
+        
+
+
+        
+        network.on("stabilizationProgress", function(params) {
+      		document.getElementById('loadingBar').removeAttribute("style");
+	        var maxWidth = 496;
+	        var minWidth = 20;
+	        var widthFactor = params.iterations/params.total;
+	        var width = Math.max(minWidth,maxWidth * widthFactor);
+
+	        document.getElementById('bar').style.width = width + 'px';
+	        document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+	    });
+	    network.once("stabilizationIterationsDone", function() {
+	        document.getElementById('text').innerHTML = '100%';
+	        document.getElementById('bar').style.width = '496px';
+	        document.getElementById('loadingBar').style.opacity = 0;
+	        // really clean the dom element
+	        setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+	    });
+        
+
+        return network;
+
+    }
+
+    drawGraph();
+
+</script>
+</body>
+</html>
